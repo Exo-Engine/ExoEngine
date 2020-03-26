@@ -1,0 +1,9 @@
+[submodule "third_party/bullet3"]
+	path = third_party/bullet3
+	url = git@github.com:bulletphysics/bullet3.git
+[submodule "lib-Exo-Renderer"]
+	path = lib-Exo-Renderer
+	url = git@github.com:Exo-Engine/lib-Exo-Renderer.git
+[submodule "lib-Exo-Audio"]
+	path = lib-Exo-Audio
+	url = git@github.com:Exo-Engine/lib-Exo-Audio.git

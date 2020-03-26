@@ -1,0 +1,90 @@
+/*
+ *  MIT License
+ *  
+ *  Copyright (c) 2020 Gaëtan Dezeiraud and Ribault Paul
+ *  
+ *  Permission is hereby granted, free of charge, to any person obtaining a copy
+ *  of this software and associated documentation files (the "Software"), to deal
+ *  in the Software without restriction, including without limitation the rights
+ *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ *  copies of the Software, and to permit persons to whom the Software is
+ *  furnished to do so, subject to the following conditions:
+ *  
+ *  The above copyright notice and this permission notice shall be included in all
+ *  copies or substantial portions of the Software.
+ *  
+ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ *  SOFTWARE.
+ */
+
+#pragma once
+
+#include "Message.h"
+#include "network.h"
+#include "Log.h"
+
+#include <string>
+
+namespace	reflection
+{
+	class		IReflectable
+	{
+		public:
+			IReflectable(void);
+			virtual ~IReflectable(void);
+	
+			void	read(Message& src);
+	
+			virtual void	write(Message& dst) = 0;
+			virtual size_t	read(Message& src, size_t index) = 0;
+		private:
+	};
+
+	template	<typename T>
+	class		ReflectableType : public IReflectable
+	{
+		public:
+			ReflectableType(T& data) : _data(data)
+			{
+			}
+			virtual ~ReflectableType(void)
+			{
+			}
+
+			virtual void	write(Message& dst)
+			{
+				_log.meeseeks << "type=" << typeid(T).name() << " size=" << sizeof(T) << std::endl;
+				dst.append(network::endian(_data));
+			}
+			virtual size_t	read(Message& src, size_t index)
+			{
+				if (index + sizeof(T) > src.getSize())
+					throw (std::invalid_argument("cannot read " + std::to_string(sizeof(T)) +
+						" bytes, only " + std::to_string(src.getSize() - index) + " left"));
+				memcpy((void*)&_data, &src[index], sizeof(T));
+				ENDIAN(_data);
+				return (index + sizeof(T));
+			}
+		private:
+			T&	_data;
+	};
+
+	class		ReflectableClass : public IReflectable
+	{
+		public:
+			ReflectableClass(void);
+			~ReflectableClass(void);
+
+			virtual void	initReflection(void) = 0;
+
+			virtual void	write(Message& dst);
+			virtual size_t	read(Message& src, size_t index);
+		protected:
+			std::vector<IReflectable*>	_members;
+	};
+}

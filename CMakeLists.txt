@@ -1,0 +1,21 @@
+cmake_minimum_required(VERSION 3.8)
+project(ExoEngine CXX)
+
+add_subdirectory(third_party/bullet3)
+add_subdirectory(lib-Exo-Renderer)
+add_subdirectory(lib-Exo-Audio)
+
+file(GLOB SOURCES
+	include/*.h
+	include/**/**.h
+	src/*.cpp
+	src/**/**.cpp
+)
+
+include_directories(
+	include
+	third_party/bullet3/src
+	lib-Exo-Renderer/renderer/include
+	lib-Exo-Audio/audio/include)
+
+add_library(ExoEngine SHARED ${SOURCES})
