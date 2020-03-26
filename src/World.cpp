@@ -1,30 +1,32 @@
 /*
- *  MIT License
- *  
- *  Copyright (c) 2020 Gaëtan Dezeiraud and Ribault Paul
- *  
- *  Permission is hereby granted, free of charge, to any person obtaining a copy
- *  of this software and associated documentation files (the "Software"), to deal
- *  in the Software without restriction, including without limitation the rights
- *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- *  copies of the Software, and to permit persons to whom the Software is
- *  furnished to do so, subject to the following conditions:
- *  
- *  The above copyright notice and this permission notice shall be included in all
- *  copies or substantial portions of the Software.
- *  
- *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- *  SOFTWARE.
+ *	MIT License
+ *	
+ *	Copyright (c) 2020 Gaëtan Dezeiraud and Ribault Paul
+ *	
+ *	Permission is hereby granted, free of charge, to any person obtaining a copy
+ *	of this software and associated documentation files (the "Software"), to deal
+ *	in the Software without restriction, including without limitation the rights
+ *	to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ *	copies of the Software, and to permit persons to whom the Software is
+ *	furnished to do so, subject to the following conditions:
+ *	
+ *	The above copyright notice and this permission notice shall be included in all
+ *	copies or substantial portions of the Software.
+ *	
+ *	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ *	IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ *	FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ *	AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ *	LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ *	SOFTWARE.
  */
 
 #include "World.h"
 #include "SManager.h"
 #include "ResourceManager.h"
+
+using namespace	ExoEngine;
 
 World::World(void) : _mapName(""), _mapMusic(""), _cameraType(-1), _cameraPos(0, 0, 0)
 {
@@ -122,42 +124,42 @@ const std::string			&World::getPlayer(size_t id)
 	return (_playersMap.at(id));
 }
 
-void                        World::setName(const std::string &name)
+void						World::setName(const std::string &name)
 {
-    _mapName = name;
+	_mapName = name;
 }
 
-void                        World::setMusic(const std::string &music)
+void						World::setMusic(const std::string &music)
 {
-    _mapMusic = music;
+	_mapMusic = music;
 }
 
-const std::string           &World::getName(void) const
+const std::string			&World::getName(void) const
 {
-    return _mapName;
+	return _mapName;
 }
 
-const std::string           &World::getMusic(void) const
+const std::string			&World::getMusic(void) const
 {
-    return _mapMusic;
+	return _mapMusic;
 }
 
-void                         World::setCameraType(int type)
+void						 World::setCameraType(int type)
 {
-    _cameraType = type;
+	_cameraType = type;
 }
 
-int                          World::getCameraType(void) const
+int							World::getCameraType(void) const
 {
-    return _cameraType;
+	return _cameraType;
 }
 
-void                         World::setCameraPos(const glm::vec3 &pos)
+void						 World::setCameraPos(const glm::vec3 &pos)
 {
-    _cameraPos = pos;
+	_cameraPos = pos;
 }
 
-const glm::vec3              &World::getCameraPos(void) const
+const glm::vec3				&World::getCameraPos(void) const
 {
-    return _cameraPos;
+	return _cameraPos;
 }

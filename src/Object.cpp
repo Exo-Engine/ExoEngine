@@ -1,25 +1,25 @@
 /*
- *  MIT License
- *  
- *  Copyright (c) 2020 Gaëtan Dezeiraud and Ribault Paul
- *  
- *  Permission is hereby granted, free of charge, to any person obtaining a copy
- *  of this software and associated documentation files (the "Software"), to deal
- *  in the Software without restriction, including without limitation the rights
- *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- *  copies of the Software, and to permit persons to whom the Software is
- *  furnished to do so, subject to the following conditions:
- *  
- *  The above copyright notice and this permission notice shall be included in all
- *  copies or substantial portions of the Software.
- *  
- *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- *  SOFTWARE.
+ *	MIT License
+ *	
+ *	Copyright (c) 2020 Gaëtan Dezeiraud and Ribault Paul
+ *	
+ *	Permission is hereby granted, free of charge, to any person obtaining a copy
+ *	of this software and associated documentation files (the "Software"), to deal
+ *	in the Software without restriction, including without limitation the rights
+ *	to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ *	copies of the Software, and to permit persons to whom the Software is
+ *	furnished to do so, subject to the following conditions:
+ *	
+ *	The above copyright notice and this permission notice shall be included in all
+ *	copies or substantial portions of the Software.
+ *	
+ *	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ *	IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ *	FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ *	AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ *	LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ *	SOFTWARE.
  */
 
 #include "Object.h"
@@ -27,6 +27,7 @@
 #include <glm/ext.hpp>
 #include <math.h>
 
+using namespace	ExoEngine;
 using namespace	ExoRenderer;
 
 Object::Object(size_t id, const objectType &type, uint32_t bitfield, const glm::vec2 &pos, const glm::vec2 scale, const glm::vec2 &speed, double angle, double rotSpeed, std::shared_ptr<hitboxes> hitboxes, std::shared_ptr<Script> script, size_t resourceId) :
@@ -116,7 +117,7 @@ void			Object::accelerateRotation(const double &acceleration)
 
 size_t Object::getId(void) const
 {
-    return (_id);
+	return (_id);
 }
 
 void		Object::setField(uint32_t field)
@@ -136,17 +137,17 @@ void		Object::removeField(uint32_t field)
 
 const Object::objectType &Object::getType(void) const
 {
-    return (_type);
+	return (_type);
 }
 
 const std::shared_ptr<hitboxes> &Object::getHitboxes(void) const
 {
-    return (_hitboxes);
+	return (_hitboxes);
 }
 
 sprite *Object::getSprite(void)
 {
-    return (&_sprite);
+	return (&_sprite);
 }
 
 bool	Object::collide(const glm::vec2 &pos) const
