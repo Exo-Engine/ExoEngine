@@ -22,25 +22,24 @@
  *	SOFTWARE.
  */
 
-#pragma once
+#include "network/IClient.h"
+#include "network/network.h"
+#include "Log.h"
+#include <string.h>
 
-#include "IResource.h"
+using namespace	ExoEngine;
+using namespace	network;
 
-#include <string>
-#include <memory>
-
-namespace	ExoEngine
+IClient::~IClient()
 {
+}
 
-class	IResourceManager : public IResource
+void	IClient::attachData(void *data)
 {
-	public:
-		virtual ~IResourceManager(void)
-		{
-		}
-		virtual void						load(const std::string &file) = 0;
-		virtual const std::string			&getProperty(const std::string &name) = 0;
-		virtual std::shared_ptr<IResource>	get(const std::string& name) = 0;
-};
+	_data = data;
+}
 
+void	*IClient::getData(void)
+{
+	return (_data);
 }

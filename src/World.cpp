@@ -23,7 +23,6 @@
  */
 
 #include "World.h"
-#include "SManager.h"
 #include "ResourceManager.h"
 
 using namespace	ExoEngine;

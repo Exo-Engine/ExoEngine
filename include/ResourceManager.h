@@ -31,34 +31,35 @@
 #include <libxml/parser.h>
 
 #include "Singleton.h"
-#include "IResourceManager.h"
 #include "IShader.h"
 #include "Font.h"
 #include "hitboxes.h"
+#include "IRenderer.h"
+#include "IAudio.h"
 
 #include "Log.h"
 
 namespace	ExoEngine
 {
 
-class ResourceManager : public Singleton<ResourceManager>, public IResourceManager
+class ResourceManager : public Singleton<ResourceManager>
 {
 	public:
-		ResourceManager(void);
+		ResourceManager(ExoRenderer::IRenderer* renderer, IAudio* audio);
 		virtual ~ResourceManager(void);
 
-		virtual void load(const std::string &file);
+		void load(const std::string &file);
 
-		virtual const std::string	&getProperty(const std::string &name);
+		const std::string	&getProperty(const std::string &name);
 
-		virtual std::shared_ptr<IResource> get(const std::string& name);
+		const std::shared_ptr<IResource>& get(const std::string& name);
 
 		template <typename T>
 		std::shared_ptr<T> get(const std::string& name)
 		{
 			auto res = _resources.find(name);
 			if (res != _resources.end())
-				return ((std::shared_ptr<T> &)(res->second->get()));
+				return (std::dynamic_pointer_cast<T>(res->second));
 
 			return nullptr;
 		}
@@ -75,108 +76,16 @@ class ResourceManager : public Singleton<ResourceManager>, public IResourceManag
 		void	loadHitboxes(const std::string &path, xmlNodePtr node);
 		void	loadReference(const std::string &path, xmlNodePtr node);
 
-		class	ILoader
+		template	<typename T>
+		void	add(const std::string &name, const std::shared_ptr<T> &resource)
 		{
-			public:
-				ILoader(void);
-				virtual ~ILoader(void);
+			_resources[name] = std::dynamic_pointer_cast<IResource>(resource);
+		}
 
-				std::shared_ptr<IResource>	 &get(void);
-
-			private:
-				virtual void	load(void) = 0;
-
-			protected:
-				std::shared_ptr<IResource> _resource;
-		};
-
-		class	fontLoader : public ILoader
-		{
-			public:
-				fontLoader(const std::string &file, const std::string &texture);
-				~fontLoader(void);
-			private:
-				virtual void	load(void);
-
-				std::string	 _file;
-				std::string	 _texture;
-		};
-
-		class	textureLoader : public ILoader
-		{
-			public:
-				textureLoader(const std::string &file);
-				~textureLoader(void);
-			private:
-				virtual void	load(void);
-
-				std::string	 _file;
-		};
-
-		class	arrayTextureLoader : public ILoader
-		{
-			public:
-				arrayTextureLoader(int width, int height, std::vector<std::string> textures, ExoRenderer::TextureFilter filter);
-				~arrayTextureLoader(void);
-			private:
-				virtual void	load(void);
-
-				std::string				 _file;
-				int						 _width;
-				int						 _height;
-				ExoRenderer::TextureFilter	_filter;
-				std::vector<std::string>	_textures;
-		};
-
-		class	soundLoader : public ILoader
-		{
-			public:
-				soundLoader(const std::string &file);
-				~soundLoader(void);
-			private:
-				virtual void	load(void);
-
-				std::string	 _file;
-		};
-
-		class	subResourceLoader : public ILoader
-		{
-			public:
-				subResourceLoader(const std::string &file);
-				~subResourceLoader(void);
-			private:
-				virtual void	load(void);
-
-				std::string	 _file;
-		};
-
-		class	hitboxesLoader : public ILoader
-		{
-			public:
-				hitboxesLoader(const std::vector<hitbox> &hitboxes);
-				~hitboxesLoader(void);
-			private:
-				virtual void		load(void);
-			
-				std::vector<hitbox> _hitboxes;
-		};
-
-		class	referenceLoader : public ILoader
-		{
-			public:
-				referenceLoader(const std::string &reference);
-				~referenceLoader(void);
-			private:
-				virtual void	load(void);
-
-				std::string	 _reference;
-		};
-
-		void	add(const std::string &name, ILoader *loader);
-
-		friend class Singleton<ResourceManager>;
-		std::unordered_map<std::string, ILoader *>	_resources;
-		std::map<std::string, std::string>			_properties;
+		ExoRenderer::IRenderer*								_renderer;
+		IAudio*												_audio;
+		std::map<std::string, std::shared_ptr<IResource>>	_resources;
+		std::map<std::string, std::string>					_properties;
 };
 
 }

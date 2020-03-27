@@ -40,10 +40,13 @@
 namespace	ExoEngine
 {
 
-class Client
+namespace	network
+{
+
+class	IClient
 {
 	public:
-		virtual ~Client(void);
+		virtual ~IClient(void);
 
 		virtual const IPaddress	&getAddress(void) const = 0;
 		virtual std::string		getStrAddress(void) const = 0;
@@ -58,53 +61,11 @@ class Client
 		void			*getData(void);
 
 		virtual bool	operator==(const IPaddress &address) const = 0;
-		virtual bool	operator==(const Client &client) const = 0;
+		virtual bool	operator==(const IClient &client) const = 0;
 	private:
 		void	*_data;
 };
 
-class TcpClient : public virtual Client
-{
-	public:
-		TcpClient(const TCPsocket &socket);
-		virtual ~TcpClient(void);
-
-		virtual const IPaddress	&getAddress(void) const;
-		virtual std::string		getStrAddress(void) const;
-		virtual std::string		getStrPort(void) const;
-		virtual std::string		getHost(void) const;
-
-		virtual SDLNet_GenericSocket	&getSocket(void);
-
-		virtual void	updateAddress(const IPaddress &address);
-
-		virtual bool	operator==(const IPaddress &address) const;
-		virtual bool	operator==(const Client &client) const;
-	private:
-		TCPsocket	_socket;
-		IPaddress	*_address;
-};
-
-class UdpClient : public virtual Client
-{
-	public:
-		UdpClient(const UDPsocket &socket, const IPaddress &address);
-		virtual ~UdpClient(void);
-
-		virtual const IPaddress	&getAddress(void) const;
-		virtual std::string		getStrAddress(void) const;
-		virtual std::string		getStrPort(void) const;
-		virtual std::string		getHost(void) const;
-
-		virtual SDLNet_GenericSocket	&getSocket(void);
-
-		virtual void	updateAddress(const IPaddress &address);
-
-		virtual bool	operator==(const IPaddress &address) const;
-		virtual bool	operator==(const Client &client) const;
-	private:
-		UDPsocket	_socket;
-		IPaddress	_address;
-};
+}
 
 }

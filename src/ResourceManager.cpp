@@ -23,7 +23,6 @@
  */
 
 #include "ResourceManager.h"
-#include "SManager.h"
 
 using namespace	ExoEngine;
 using namespace ExoRenderer;
@@ -60,21 +59,22 @@ static std::string	getPath(const std::string &file)
 		return ("");
 }
 
-ResourceManager::ResourceManager(void)
-{	}
+ResourceManager::ResourceManager(ExoRenderer::IRenderer* renderer, IAudio* audio) : _renderer(renderer), _audio(audio)
+{
+}
 
 ResourceManager::~ResourceManager(void)
 {
 	for (auto resource = _resources.begin(); resource != _resources.end(); resource++)
-		delete resource->second;
+		delete resource->second.get();
 	_resources.clear();
 }
 
-std::shared_ptr<IResource> ResourceManager::get(const std::string& name)
+const std::shared_ptr<IResource>& ResourceManager::get(const std::string& name)
 {
 	auto res = _resources.find(name);
 	if (res != _resources.end())
-		return (res->second->get());
+		return (res->second);
 
 	return nullptr;
 }
@@ -82,11 +82,6 @@ std::shared_ptr<IResource> ResourceManager::get(const std::string& name)
 const std::string	&ResourceManager::getProperty(const std::string &name)
 {
 	return (_properties.at(name));
-}
-
-void	ResourceManager::add(const std::string &name, ILoader *loader)
-{
-	_resources[name] = loader;
 }
 
 void	ResourceManager::loadFont(const std::string &relativePath, xmlNodePtr node)
@@ -102,7 +97,8 @@ void	ResourceManager::loadFont(const std::string &relativePath, xmlNodePtr node)
 	if (!texture)
 		_log.warning << "font without texture" << std::endl;
 	if (name && path)
-		add((char *)name, new fontLoader((relativePath + (char *)path).c_str(), (relativePath + (char *)texture).c_str()));
+		add((char *)name, std::shared_ptr<Font>(
+			new Font(std::shared_ptr<FntLoader>(new FntLoader((relativePath + (char *)path).c_str())), std::shared_ptr<ITexture>(_renderer->createTexture((relativePath + (char *)texture).c_str())))));
 }
 
 void	ResourceManager::loadTexture(const std::string &relativePath, xmlNodePtr node)
@@ -115,7 +111,7 @@ void	ResourceManager::loadTexture(const std::string &relativePath, xmlNodePtr no
 	if (!path)
 		_log.warning << "texture without path" << std::endl;
 	if (name && path)
-		add((char *)name, new textureLoader((relativePath + (char *)path).c_str()));
+		add((char *)name, std::shared_ptr<ITexture>(_renderer->createTexture((relativePath + (char *)path).c_str())));
 }
 
 void	ResourceManager::loadArrayTexture(const std::string &relativePath, xmlNodePtr node)
@@ -139,7 +135,7 @@ void	ResourceManager::loadArrayTexture(const std::string &relativePath, xmlNodeP
 	for (auto texture = textures.begin(); texture != textures.end(); texture++)
 		(*texture) = relativePath + (*texture);
 	if (name && width && height && content)
-		add((char *)name, new arrayTextureLoader(std::stoi((char *)width), std::stoi((char *)height), textures, strcmp((char*)filter, "nearest") == 0 ? TextureFilter::NEAREST : TextureFilter::LINEAR));
+		add((char *)name, std::shared_ptr<IArrayTexture>(_renderer->createArrayTexture(std::stoi((char *)width), std::stoi((char *)height), textures, strcmp((char*)filter, "nearest") == 0 ? TextureFilter::NEAREST : TextureFilter::LINEAR)));
 }
 
 void	ResourceManager::loadSound(const std::string &relativePath, xmlNodePtr node)
@@ -152,11 +148,12 @@ void	ResourceManager::loadSound(const std::string &relativePath, xmlNodePtr node
 	if (!path)
 		_log.warning << "sound without path" << std::endl;
 	if (name && path)
-		add((char *)name, new soundLoader((relativePath + (char *)path).c_str()));
+		add((char *)name, std::shared_ptr<ISound>(_audio->createSound((relativePath + (char *)path).c_str())));
 }
 
 void	ResourceManager::loadSubResource(const std::string &relativePath, xmlNodePtr node)
 {
+	ResourceManager	*resourceManager;
 	xmlChar *name = xmlGetProp(node, (const xmlChar *)"name");
 	xmlChar *path = xmlGetProp(node, (const xmlChar *)"path");
 
@@ -165,12 +162,16 @@ void	ResourceManager::loadSubResource(const std::string &relativePath, xmlNodePt
 	if (!path)
 		_log.warning << "sound without path" << std::endl;
 	if (name && path)
-		add((char *)name, new subResourceLoader((relativePath + (char *)path).c_str()));
+	{
+		resourceManager = new ResourceManager(_renderer, _audio);
+		resourceManager->load((relativePath + (char *)path).c_str());
+		add((char *)name, std::shared_ptr<ResourceManager>(resourceManager));
+	}
 }
 
 void	ResourceManager::loadHitboxes(const std::string &path, xmlNodePtr node)
 {
-	std::vector<hitbox> hitboxes;
+	std::vector<hitbox> hitboxesVector;
 
 	for (auto currentNode = node->children; currentNode; currentNode = currentNode->next)
 	{
@@ -192,28 +193,15 @@ void	ResourceManager::loadHitboxes(const std::string &path, xmlNodePtr node)
 				if (!height)
 					_log.warning << "hitbox without height" << std::endl;
 				if (centerX && centerY && width && height)
-					hitboxes.push_back({std::stof((char *)centerX), std::stof((char *)centerY), std::stof((char *)width), std::stof((char *)height)});
+					hitboxesVector.push_back({std::stof((char *)centerX), std::stof((char *)centerY), std::stof((char *)width), std::stof((char *)height)});
 			}
 			else
 				_log.warning << "unknown hitbox type '" << currentNode->name << "'" << std::endl;
 		}
 	}
 
-	if (hitboxes.size() > 0)
-		add("hitboxes", new hitboxesLoader(hitboxes));
-}
-
-void	ResourceManager::loadReference(const std::string &path, xmlNodePtr node)
-{
-	xmlChar *name = xmlGetProp(node, (const xmlChar *)"name");
-	xmlChar *reference = xmlGetProp(node, (const xmlChar *)"reference");
-
-	if (!name)
-		_log.warning << "reference without name" << std::endl;
-	if (!reference)
-		_log.warning << "reference without reference" << std::endl;
-	if (name && reference)
-		add((char *)name, new referenceLoader((char *)reference));
+	if (hitboxesVector.size() > 0)
+		add("hitboxes", std::shared_ptr<hitboxes>(new hitboxes(hitboxesVector)));
 }
 
 void	ResourceManager::loadProperties(xmlNodePtr node)
@@ -264,8 +252,6 @@ void	ResourceManager::load(const std::string &file)
 					loadSubResource(path, currentNode);
 				else if (!xmlStrcmp(currentNode->name, (const xmlChar*)"hitboxes"))
 					loadHitboxes(path, currentNode);
-				else if (!xmlStrcmp(currentNode->name, (const xmlChar*)"reference"))
-					loadReference(path, currentNode);
 				else
 					_log.warning << "unknown resource type '" << currentNode->name << "'" << std::endl;
 			}
@@ -273,112 +259,4 @@ void	ResourceManager::load(const std::string &file)
 	}
 
 	xmlFreeDoc(doc);
-}
-
-ResourceManager::ILoader::ILoader(void)
-{
-}
-
-ResourceManager::ILoader::~ILoader(void)
-{
-}
-
-std::shared_ptr<IResource> &ResourceManager::ILoader::get(void)
-{
-	if (!_resource.get())
-		this->load();
-	return (_resource);
-}
-
-ResourceManager::fontLoader::fontLoader(const std::string &file, const std::string &texture) : _file(file), _texture(texture)
-{
-}
-
-ResourceManager::fontLoader::~fontLoader(void)
-{
-}
-
-void	ResourceManager::fontLoader::load(void)
-{
-	_resource = std::dynamic_pointer_cast<IResource>(std::shared_ptr<Font>(new Font(std::shared_ptr<FntLoader>(new FntLoader(_file)), std::shared_ptr<ITexture>(SManager::Get().getRenderer()->createTexture(_texture)))));
-}
-
-ResourceManager::textureLoader::textureLoader(const std::string &file) : _file(file)
-{
-}
-
-ResourceManager::textureLoader::~textureLoader(void)
-{
-}
-
-void	ResourceManager::textureLoader::load(void)
-{
-	_resource = std::dynamic_pointer_cast<IResource>(std::shared_ptr<ITexture>(SManager::Get().getRenderer()->createTexture(_file)));
-}
-
-ResourceManager::arrayTextureLoader::arrayTextureLoader(int width, int height, std::vector<std::string> textures, TextureFilter filter) : _width(width), _height(height), _textures(textures), _filter(filter)
-{
-}
-
-ResourceManager::arrayTextureLoader::~arrayTextureLoader(void)
-{
-}
-
-void	ResourceManager::arrayTextureLoader::load(void)
-{
-	_resource = std::dynamic_pointer_cast<IResource>(std::shared_ptr<IArrayTexture>(SManager::Get().getRenderer()->createArrayTexture(_width, _height, _textures, _filter)));
-}
-
-ResourceManager::soundLoader::soundLoader(const std::string &file) : _file(file)
-{
-}
-
-ResourceManager::soundLoader::~soundLoader(void)
-{
-}
-
-void	ResourceManager::soundLoader::load(void)
-{
-	_resource = std::dynamic_pointer_cast<IResource>(std::shared_ptr<ISound>(SManager::Get().getAudio()->createSound(_file)));
-}
-
-ResourceManager::subResourceLoader::subResourceLoader(const std::string &file) : _file(file)
-{
-	load();
-}
-
-ResourceManager::subResourceLoader::~subResourceLoader(void)
-{
-}
-
-void	ResourceManager::subResourceLoader::load(void)
-{
-	_resource = std::dynamic_pointer_cast<IResource>(std::shared_ptr<ResourceManager>(new ResourceManager()));
-	((ResourceManager *)_resource.get())->load(_file);
-}
-
-ResourceManager::hitboxesLoader::hitboxesLoader(const std::vector<hitbox> &hitboxes): _hitboxes(hitboxes)
-{
-}
-
-ResourceManager::hitboxesLoader::~hitboxesLoader(void)
-{
-}
-
-void	ResourceManager::hitboxesLoader::load(void)
-{
-	_resource = std::dynamic_pointer_cast<IResource>(std::shared_ptr<hitboxes>(new hitboxes(_hitboxes)));
-}
-
-ResourceManager::referenceLoader::referenceLoader(const std::string &reference) : _reference(reference)
-{
-}
-
-ResourceManager::referenceLoader::~referenceLoader(void)
-{
-}
-
-void	ResourceManager::referenceLoader::load(void)
-{
-	_resource = ResourceManager::Get().get<IResource>(_reference);
 }

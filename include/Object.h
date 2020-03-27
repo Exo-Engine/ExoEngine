@@ -26,7 +26,6 @@
 
 #include <glm/vec2.hpp>
 #include <mutex>
-#include "IResourceManager.h"
 #include "hitboxes.h"
 #include "Script.h"
 #include "sprite.h"

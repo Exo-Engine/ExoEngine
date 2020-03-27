@@ -22,26 +22,12 @@
  *	SOFTWARE.
  */
 
-#include "Client.h"
-#include "network.h"
+#include "network/TcpClient.h"
+#include "network/network.h"
 #include "Log.h"
-#include <string.h>
 
 using namespace	ExoEngine;
-
-Client::~Client()
-{
-}
-
-void	Client::attachData(void *data)
-{
-	_data = data;
-}
-
-void	*Client::getData(void)
-{
-	return (_data);
-}
+using namespace	network;
 
 TcpClient::TcpClient(const TCPsocket &socket) : _socket(socket)
 {
@@ -104,65 +90,7 @@ bool	TcpClient::operator==(const IPaddress &address) const
 			SDLNet_Read16(&address.port) == SDLNet_Read16(&_address->port)));
 }
 
-bool	TcpClient::operator==(const Client &client) const
-{
-	return (*this == client.getAddress());
-}
-
-UdpClient::UdpClient(const UDPsocket &socket, const IPaddress &address) : _socket(socket), _address(address)
-{
-}
-
-UdpClient::~UdpClient(void)
-{
-}
-
-const IPaddress		&UdpClient::getAddress(void) const
-{
-	return (_address);
-}
-
-std::string		UdpClient::getStrAddress(void) const
-{
-	std::string	str;
-	Uint32	address = _address.host;
-	SDLNet_Read32(&address);
-
-	for (size_t i = 0; i < sizeof(address); i++)
-		if (!i)
-			str.append(std::to_string((Uint32)((Uint8 *)&address)[i] & 0xff));
-		else
-			str.append(".").append(std::to_string((Uint32)((Uint8 *)&address)[i] & 0xff));
-	return (str);
-}
-
-std::string		UdpClient::getStrPort(void) const
-{
-	return (std::to_string(SDLNet_Read16(&_address.port)));
-}
-
-std::string		UdpClient::getHost(void) const
-{
-	return (std::string(SDLNet_ResolveIP(&_address)));
-}
-
-void	UdpClient::updateAddress(const IPaddress &address)
-{
-	_address = address;
-}
-
-SDLNet_GenericSocket	&UdpClient::getSocket(void)
-{
-	return ((SDLNet_GenericSocket &)_socket);
-}
-
-bool	UdpClient::operator==(const IPaddress &address) const
-{
-	return ((SDLNet_Read32(&address.host) == SDLNet_Read32(&_address.host) &&
-			SDLNet_Read16(&address.port) == SDLNet_Read16(&_address.port)));
-}
-
-bool	UdpClient::operator==(const Client &client) const
+bool	TcpClient::operator==(const IClient &client) const
 {
 	return (*this == client.getAddress());
 }
