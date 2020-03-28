@@ -26,6 +26,7 @@
 
 using namespace	ExoEngine;
 using namespace ExoRenderer;
+using namespace	ExoAudio;
 
 static std::vector<std::string>	explode(const std::string &str, const std::string &sep)
 {
@@ -75,8 +76,7 @@ const std::shared_ptr<IResource>& ResourceManager::get(const std::string& name)
 	auto res = _resources.find(name);
 	if (res != _resources.end())
 		return (res->second);
-
-	return nullptr;
+	throw (std::invalid_argument("resource '" + name + "' doesn't exists"));
 }
 
 const std::string	&ResourceManager::getProperty(const std::string &name)

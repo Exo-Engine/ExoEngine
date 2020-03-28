@@ -45,7 +45,7 @@ namespace	ExoEngine
 class ResourceManager : public Singleton<ResourceManager>
 {
 	public:
-		ResourceManager(ExoRenderer::IRenderer* renderer, IAudio* audio);
+		ResourceManager(ExoRenderer::IRenderer* renderer, ExoAudio::IAudio* audio);
 		virtual ~ResourceManager(void);
 
 		void load(const std::string &file);
@@ -83,7 +83,7 @@ class ResourceManager : public Singleton<ResourceManager>
 		}
 
 		ExoRenderer::IRenderer*								_renderer;
-		IAudio*												_audio;
+		ExoAudio::IAudio*									_audio;
 		std::map<std::string, std::shared_ptr<IResource>>	_resources;
 		std::map<std::string, std::string>					_properties;
 };
