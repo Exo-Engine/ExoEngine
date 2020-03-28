@@ -26,7 +26,7 @@
 
 using namespace	ExoEngine;
 
-Log	_log("log");
+Log	ExoEngine::_log("log");
 
 Log::Log(const std::string &file) : error(*this, "error", 196, _start), warning(*this, "warning", 208, _start), info(*this, "info", 190, _start), debug(*this, "debug", 46, _start), meeseeks(*this, "look at meeeee", 39, _start)
 {

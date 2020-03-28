@@ -30,8 +30,8 @@
 using namespace	ExoEngine;
 using namespace	ExoRenderer;
 
-Object::Object(size_t id, const objectType &type, uint32_t bitfield, const glm::vec2 &pos, const glm::vec2 scale, const glm::vec2 &speed, double angle, double rotSpeed, std::shared_ptr<hitboxes> hitboxes, std::shared_ptr<Script> script, size_t resourceId) :
-	_id(id), _type(type), _bitfield(bitfield), _pos(pos), _scale(scale), _speed(speed), _angle(angle), _rotSpeed(rotSpeed), _hitboxes(hitboxes), _script(script), _sprite(), _resourceId(resourceId)
+Object::Object(size_t id, const objectType &type, uint32_t bitfield, const glm::vec2 &pos, const glm::vec2 scale, const glm::vec2 &speed, double angle, double rotSpeed, std::shared_ptr<hitboxes> hitboxes, size_t resourceId) :
+	_id(id), _type(type), _bitfield(bitfield), _pos(pos), _scale(scale), _speed(speed), _angle(angle), _rotSpeed(rotSpeed), _hitboxes(hitboxes), _sprite(), _resourceId(resourceId)
 {
 	_sprite = sprite();
 }
@@ -215,11 +215,6 @@ void	Object::handleRotationAccelerate(const float &elapsedTime, const float &acc
 float	Object::distance(const glm::vec2 &pos)
 {
 	return (sqrt(pow(pos.x - _pos.x, 2) + pow(pos.y - _pos.y, 2)));
-}
-
-std::shared_ptr<Script>	&Object::getScript(void)
-{
-	return (_script);
 }
 
 size_t					Object::getLayer(void) const

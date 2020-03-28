@@ -22,7 +22,7 @@
  *	SOFTWARE.
  */
 
-#include "reflection.h"
+#include "Reflectable.h"
 
 using namespace	ExoEngine;
 

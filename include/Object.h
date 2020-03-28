@@ -27,7 +27,6 @@
 #include <glm/vec2.hpp>
 #include <mutex>
 #include "hitboxes.h"
-#include "Script.h"
 #include "sprite.h"
 
 namespace	ExoEngine
@@ -44,7 +43,7 @@ class	Object
 			ENTITY
 		}	objectType;
 
-		Object(size_t id, const objectType &type, uint32_t bitfield, const glm::vec2 &pos, const glm::vec2 scale, const glm::vec2 &speed, double angle, double rotSpeed, std::shared_ptr<hitboxes> hitboxes, std::shared_ptr<Script> script, size_t resourceId);
+		Object(size_t id, const objectType &type, uint32_t bitfield, const glm::vec2 &pos, const glm::vec2 scale, const glm::vec2 &speed, double angle, double rotSpeed, std::shared_ptr<hitboxes> hitboxes, size_t resourceId);
 		virtual ~Object(void);
 
 		const glm::vec2	&getPos(void) const;
@@ -95,7 +94,6 @@ class	Object
 
 		float			distance(const glm::vec2 &pos);
 
-		std::shared_ptr<Script>	&getScript(void);
 		size_t					getLayer(void) const;
 
 		size_t					getResourceId(void) const;
@@ -109,7 +107,6 @@ class	Object
 		double						_angle;
 		double						_rotSpeed;
 		std::shared_ptr<hitboxes>	_hitboxes;
-		std::shared_ptr<Script>		_script;
 		ExoRenderer::sprite			_sprite;
 		size_t						_resourceId;
 };

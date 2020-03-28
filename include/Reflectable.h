@@ -30,6 +30,19 @@
 
 #include <string>
 
+#define REFLECT_ATTRIBUTES_START()		\
+	virtual void	initReflection(void)\
+	{\
+
+#define REFLECT_ATTRIBUTE(attr)		\
+		if (std::is_base_of<IReflectable, decltype(attr)>::value == true)\
+			_members.push_back((reflection::IReflectable*)&attr);\
+		else\
+			_members.push_back(new reflection::ReflectableType<decltype(attr)>(attr));
+
+#define REFLECT_ATTRIBUTES_END()		\
+	}
+
 namespace	ExoEngine
 {
 
@@ -61,17 +74,36 @@ namespace	reflection
 
 			virtual void	write(Message& dst)
 			{
-				_log.meeseeks << "type=" << typeid(T).name() << " size=" << sizeof(T) << std::endl;
-				dst.append(network::endian(_data));
+				if (typeid(T) == typeid(std::string))
+				{
+					dst.append(((std::string&)_data).length());
+					dst.append(_data);
+				}
+				else
+				{
+					dst.append(network::endian(_data));
+				}
 			}
 			virtual size_t	read(Message& src, size_t index)
 			{
-				if (index + sizeof(T) > src.getSize())
-					throw (std::invalid_argument("cannot read " + std::to_string(sizeof(T)) +
-						" bytes, only " + std::to_string(src.getSize() - index) + " left"));
-				memcpy((void*)&_data, &src[index], sizeof(T));
-				ENDIAN(_data);
-				return (index + sizeof(T));
+				if (typeid(T) == typeid(std::string))
+				{
+					std::string::size_type	size;
+
+					memcpy((void*)&size, &src[index], sizeof(size));
+					((std::string&)_data).resize(size);
+					memcpy(&((std::string&)_data)[0], &src[index] + sizeof(size), size);
+					return (index + sizeof(size) + size);
+				}
+				else
+				{
+					if (index + sizeof(T) > src.getSize())
+						throw (std::invalid_argument("cannot read " + std::to_string(sizeof(T)) +
+							" bytes, only " + std::to_string(src.getSize() - index) + " left"));
+					memcpy((void*)&_data, &src[index], sizeof(T));
+					ENDIAN(_data);
+					return (index + sizeof(T));
+				}
 			}
 		private:
 			T&	_data;
@@ -83,11 +115,12 @@ namespace	reflection
 			ReflectableClass(void);
 			~ReflectableClass(void);
 
-			virtual void	initReflection(void) = 0;
 
 			virtual void	write(Message& dst);
 			virtual size_t	read(Message& src, size_t index);
 		protected:
+			virtual void	initReflection(void) = 0;
+
 			std::vector<IReflectable*>	_members;
 	};
 }

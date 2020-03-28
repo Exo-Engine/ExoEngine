@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.8)
 project(ExoEngine CXX)
 
+subdirs(examples)
+
 add_subdirectory(third_party/bullet3)
 add_subdirectory(lib-Exo-Renderer)
 add_subdirectory(lib-Exo-Audio)
