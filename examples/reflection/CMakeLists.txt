@@ -6,6 +6,6 @@ file(GLOB SOURCES
 	*.cpp
 )
 
-link_libraries(ExoEngine SDL2 SDL2_net ssl crypto xml2 BulletDynamics BulletCollision LinearMath)
+link_libraries(ExoEngine)
 
 add_executable(reflection ${SOURCES})

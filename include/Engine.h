@@ -22,30 +22,36 @@
  *	SOFTWARE.
  */
 
+#pragma once
+
+#include "IRenderer.h"
+#include "IAudio.h"
+#include "ResourceManager.h"
 #include "SettingsManager.h"
+#include "LibLoader.h"
 
-ExoEngine::ExoEngine(void)
+namespace	ExoEngine
 {
-	_resourceManager = new ResourceManager();
-	_settingsManager = new SettingsManager();
-}
 
-ExoEngine::~ExoEngine(void)
+class	Engine
 {
-}
+	public:
+		Engine(void);
+		Engine(const std::string& settingsFile);
+		virtual ~Engine(void);
 
-ResourceManager*		ExoEngine::getResourceManager(void) const
-{
-}
+		void					initialize(const std::string& settingsFile);
 
-SettingsManager*		ExoEngine::getSettingsManager(void) const
-{
-}
+		ResourceManager*		getResourceManager(void) const;
+		SettingsManager*		getSettingsManager(void) const;
+		ExoRenderer::IRenderer*	getRenderer(void) const;
+		ExoAudio::IAudio*		getAudio(void) const;
 
-ExoRenderer::IRenderer*	ExoEngine::getRenderer(void) const
-{
-}
+	private:
+		ResourceManager*					_resourceManager;
+		SettingsManager*					_settingsManager;
+		LibLoader<ExoRenderer::IRenderer>*	_rendererPlugin;
+		LibLoader<ExoAudio::IAudio>*		_audioPlugin;
+};
 
-ExoAudio::IAudio*		ExoEngine::getAudio(void) const
-{
 }

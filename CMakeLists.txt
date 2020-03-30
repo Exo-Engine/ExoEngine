@@ -20,4 +20,6 @@ include_directories(
 	lib-Exo-Renderer/renderer/include
 	lib-Exo-Audio/audio/include)
 
-add_library(ExoEngine SHARED ${SOURCES})
+link_libraries(SDL2_net ssl crypto dl pthread xml2 BulletDynamics BulletCollision LinearMath)
+
+add_library(ExoEngine STATIC ${SOURCES})

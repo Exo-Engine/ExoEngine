@@ -22,10 +22,22 @@
  *	SOFTWARE.
  */
 
+#include "Engine.h"
+
 using namespace	ExoEngine;
-using namespace	reflection;
+using namespace	ExoRenderer;
 
 int		main(void)
 {
+	Engine		engine("settings.xml");
+	IRenderer*	renderer = engine.getRenderer();
+	IWindow*	window;
+
+	renderer->initialize("example window", 1280, 720, WINDOWED, false);
+	window = renderer->getWindow();
+	while (!window->getIsClosing())
+	{
+		renderer->swap();
+	}
 	return (EXIT_SUCCESS);
 }
