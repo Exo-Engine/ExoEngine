@@ -23,7 +23,6 @@
  */
 
 #include "Reflectable.h"
-#include "Log.h"
 #include <iostream>
 
 using namespace	ExoEngine;

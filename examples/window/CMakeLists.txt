@@ -8,4 +8,4 @@ file(GLOB SOURCES
 
 link_libraries(ExoEngine SDL2 SDL2_net ssl crypto xml2 BulletDynamics BulletCollision LinearMath)
 
-add_executable(reflection ${SOURCES})
+add_executable(window ${SOURCES})
