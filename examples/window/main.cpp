@@ -29,14 +29,27 @@ using namespace	ExoRenderer;
 
 int		main(void)
 {
-	Engine		engine("settings.xml");
+	Engine		engine("resources/settings.xml");
 	IRenderer*	renderer = engine.getRenderer();
 	IWindow*	window;
+	IKeyboard*	keyboard;
+	bool		run = true;
 
 	renderer->initialize("example window", 1280, 720, WINDOWED, false);
+	ICursor* cursor = renderer->createCursor();
+	std::shared_ptr<ITexture> cursorTexture = std::shared_ptr<ITexture>(renderer->createTexture("cursor.png"));
+	cursor->setCursorTexture(cursorTexture);
+	renderer->setCursor(cursor);
 	window = renderer->getWindow();
-	while (!window->getIsClosing())
+	keyboard = renderer->getKeyboard();
+	window->setVsync(true);
+	while (run)
 	{
+		if (keyboard->isKeyDown(KEY_ESCAPE))
+			run = false;
+		if (window->getIsClosing())
+			run = false;
+		cursor->update();
 		renderer->swap();
 	}
 	return (EXIT_SUCCESS);
