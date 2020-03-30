@@ -66,8 +66,6 @@ ResourceManager::ResourceManager(ExoRenderer::IRenderer* renderer, IAudio* audio
 
 ResourceManager::~ResourceManager(void)
 {
-	for (auto resource = _resources.begin(); resource != _resources.end(); resource++)
-		delete resource->second.get();
 	_resources.clear();
 }
 
@@ -222,7 +220,6 @@ void	ResourceManager::load(const std::string &file)
 	xmlNodePtr	root;
 
 	path = getPath(file);
-	_log.info << "loading resource file '" << file << "', resources relative path: " << path << std::endl;
 	doc = xmlParseFile(file.c_str());
 	if (!doc)
 		throw (std::invalid_argument("cannot read xml file '" + file + "'"));

@@ -36,8 +36,9 @@ int		main(void)
 	bool		run = true;
 
 	renderer->initialize("example window", 1280, 720, WINDOWED, false);
+	engine.getResourceManager()->load("resources/resources.xml");
 	ICursor* cursor = renderer->createCursor();
-	std::shared_ptr<ITexture> cursorTexture = std::shared_ptr<ITexture>(renderer->createTexture("cursor.png"));
+	std::shared_ptr<ITexture> cursorTexture = engine.getResourceManager()->get<ITexture>("cursor");
 	cursor->setCursorTexture(cursorTexture);
 	renderer->setCursor(cursor);
 	window = renderer->getWindow();

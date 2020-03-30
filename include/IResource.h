@@ -22,7 +22,8 @@
  *	SOFTWARE.
  */
 
-#pragma once
+#ifndef IRESOURCE_H
+# define IRESOURCE_H
 
 namespace	ExoEngine
 {
@@ -35,4 +36,5 @@ public:
 };
 
 }
- 
+
+#endif

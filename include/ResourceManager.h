@@ -36,13 +36,14 @@
 #include "hitboxes.h"
 #include "IRenderer.h"
 #include "IAudio.h"
+#include "IResource.h"
 
 #include "Log.h"
 
 namespace	ExoEngine
 {
 
-class ResourceManager : public Singleton<ResourceManager>
+class ResourceManager : public Singleton<ResourceManager>, public IResource
 {
 	public:
 		ResourceManager(ExoRenderer::IRenderer* renderer, ExoAudio::IAudio* audio);

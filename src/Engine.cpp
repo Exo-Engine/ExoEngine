@@ -80,6 +80,7 @@ void					Engine::initialize(const std::string& settingsFile)
 	}
 	_rendererPlugin = new LibLoader<IRenderer>(rendererLibSetting->getValue());
 	_audioPlugin = new LibLoader<IAudio>(audioLibSetting->getValue());
+	_resourceManager = new ResourceManager(getRenderer(), getAudio());
 }
 
 ResourceManager*		Engine::getResourceManager(void) const
