@@ -1,18 +1,18 @@
 /*
  *	MIT License
- *	
+ *
  *	Copyright (c) 2020 Gaëtan Dezeiraud and Ribault Paul
- *	
+ *
  *	Permission is hereby granted, free of charge, to any person obtaining a copy
  *	of this software and associated documentation files (the "Software"), to deal
  *	in the Software without restriction, including without limitation the rights
  *	to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  *	copies of the Software, and to permit persons to whom the Software is
  *	furnished to do so, subject to the following conditions:
- *	
+ *
  *	The above copyright notice and this permission notice shall be included in all
  *	copies or substantial portions of the Software.
- *	
+ *
  *	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  *	IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  *	FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -37,13 +37,20 @@ int		main(void)
 
 	renderer->initialize("example window", 1280, 720, WINDOWED, false);
 	engine.getResourceManager()->load("resources/resources.xml");
+	window = renderer->getWindow();
+	keyboard = renderer->getKeyboard();
+	window->setVsync(true);
+
 	ICursor* cursor = renderer->createCursor();
 	std::shared_ptr<ITexture> cursorTexture = engine.getResourceManager()->get<ITexture>("cursor");
 	cursor->setCursorTexture(cursorTexture);
 	renderer->setCursor(cursor);
-	window = renderer->getWindow();
-	keyboard = renderer->getKeyboard();
-	window->setVsync(true);
+
+	IImage* image = renderer->createImage(cursorTexture);
+	image->setAnchor(AnchorPoint::CENTER);
+	image->setSize(100, 100);
+	renderer->add(image);
+
 	while (run)
 	{
 		if (keyboard->isKeyDown(KEY_ESCAPE))
