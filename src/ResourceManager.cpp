@@ -24,6 +24,8 @@
 
 #include "ResourceManager.h"
 
+#include "Utils.h"
+
 using namespace	ExoEngine;
 using namespace ExoRenderer;
 using namespace	ExoAudio;
@@ -46,18 +48,6 @@ static std::vector<std::string>	explode(const std::string &str, const std::strin
 		}
 	}
 	return (vector);
-}
-
-static std::string	getPath(const std::string &file)
-{
-	size_t	i;
-
-	for (i = file.length() - 1; i != (size_t)-1 && file[i] != '/'; i--)
-		;
-	if (i)
-		return (std::string(file, 0, i + 1));
-	else
-		return ("");
 }
 
 ResourceManager::ResourceManager(ExoRenderer::IRenderer* renderer, IAudio* audio) : _renderer(renderer), _audio(audio)

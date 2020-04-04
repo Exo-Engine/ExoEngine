@@ -23,6 +23,7 @@
  */
 
 #include "Engine.h"
+#include "Utils.h"
 
 #include "LibLoader.h"
 
@@ -58,9 +59,11 @@ Engine::~Engine(void)
 
 void					Engine::initialize(const std::string& settingsFile)
 {
+	std::string	path;
 	Setting*	rendererLibSetting;
 	Setting*	audioLibSetting;
 
+	path = getPath(settingsFile);
 	_settingsManager->load(settingsFile);
 	try
 	{
@@ -78,8 +81,8 @@ void					Engine::initialize(const std::string& settingsFile)
 	{
 		_log.error << "missing libAudio in settings file '" << settingsFile << "'" << std::endl;
 	}
-	_rendererPlugin = new LibLoader<IRenderer>(rendererLibSetting->getValue());
-	_audioPlugin = new LibLoader<IAudio>(audioLibSetting->getValue());
+	_rendererPlugin = new LibLoader<IRenderer>(path + rendererLibSetting->getValue());
+	_audioPlugin = new LibLoader<IAudio>(path + audioLibSetting->getValue());
 	_resourceManager = new ResourceManager(getRenderer(), getAudio());
 }
 
