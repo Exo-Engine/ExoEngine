@@ -29,4 +29,14 @@
 namespace	ExoEngine
 {
 	std::string		getPath(const std::string &file);
+
+	template	<typename T>
+	void		safeDelete(T*& instance)
+	{
+		if (instance)
+		{
+			delete instance;
+			instance = nullptr;
+		}
+	}
 }

@@ -30,7 +30,6 @@
 #include <map>
 #include <libxml/parser.h>
 
-#include "Singleton.h"
 #include "IShader.h"
 #include "Font.h"
 #include "hitboxes.h"
@@ -43,11 +42,13 @@
 namespace	ExoEngine
 {
 
-class ResourceManager : public Singleton<ResourceManager>, public IResource
+class ResourceManager : public IResource
 {
 	public:
 		ResourceManager(ExoRenderer::IRenderer* renderer, ExoAudio::IAudio* audio);
 		virtual ~ResourceManager(void);
+
+		ExoRenderer::IRenderer*	getRenderer(void) const;
 
 		void load(const std::string &file);
 

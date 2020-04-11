@@ -170,9 +170,9 @@ class	Dynamic : public IAttribute
 		virtual float		toFloat(void) const;
 		virtual double		toDouble(void) const;
 
-		IAttribute*			addAttribute(IAttribute* attribute);
+		void				addAttribute(IAttribute* attribute);
 		template			<typename T>
-		IAttribute*			addAttribute(const std::string& name, const T& attribute)
+		void				addAttribute(const std::string& name, const T& attribute)
 		{
 			addAttribute(name, static_cast<IAttribute*>(new Attribute<T>(name, attribute)));
 		}
@@ -183,6 +183,11 @@ class	Dynamic : public IAttribute
 		const IAttribute*	getAttribute(size_t index) const;
 		IAttribute*			getAttribute(const std::string& name);
 		const IAttribute*	getAttribute(const std::string& name) const;
+		template			<typename T>
+		T&					getAttribute(const std::string& name)
+		{
+			return (static_cast<Attribute<T>*>(getAttribute(name))->value());
+		}
 
 		void				removeAttribute(const std::string& name);
 		void				removeAttribute(const IAttribute* attribute);

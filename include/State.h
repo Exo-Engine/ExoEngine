@@ -36,23 +36,31 @@ template	<typename ... Types>
 class	State
 {
 	public:
-		State(const std::string &name) : _name(name)
+		State(StateMachine<Types ...> &stateMachine, const std::string &name) :
+			_stateMachine(stateMachine),
+			_name(name)
 		{
 		}
 		virtual ~State(void)
 		{
 		}
 
-		virtual void	load(StateMachine<Types ...> &stateMachine) = 0;
-		virtual void	unload(StateMachine<Types ...> &stateMachine) = 0;
-		virtual void	run(StateMachine<Types ...> &stateMachine, Types ... args) = 0;
+		StateMachine<Types ...>&	getStateMachine(void) const
+		{
+			return (_stateMachine);
+		}
+
+		virtual void	load(void) = 0;
+		virtual void	unload(void) = 0;
+		virtual void	run(Types ... args) = 0;
 
 		const std::string	&name(void) const
 		{
 			return (_name);
 		}
 	private:
-		std::string _name;
+		StateMachine<Types ...>&	_stateMachine;
+		std::string					_name;
 };
 
 }

@@ -20,6 +20,8 @@ include_directories(
 	lib-Exo-Renderer/renderer/include
 	lib-Exo-Audio/audio/include)
 
+	SET(CMAKE_CXX_FLAGS  "-Wall -Wextra")
+
 link_libraries(SDL2_net ssl crypto dl pthread xml2 BulletDynamics BulletCollision LinearMath)
 
 add_library(ExoEngine STATIC ${SOURCES})

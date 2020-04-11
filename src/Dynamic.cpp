@@ -116,7 +116,7 @@ double		Dynamic::toDouble(void) const
 	return (0);
 }
 
-IAttribute*			Dynamic::addAttribute(IAttribute* attribute)
+void				Dynamic::addAttribute(IAttribute* attribute)
 {
 	if (_attributes.find(attribute->name()) != _attributes.end())
 		throw(std::invalid_argument("attribute '" + attribute->name() + "'already present"));

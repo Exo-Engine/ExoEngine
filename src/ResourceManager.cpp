@@ -59,6 +59,11 @@ ResourceManager::~ResourceManager(void)
 	_resources.clear();
 }
 
+ExoRenderer::IRenderer*	ResourceManager::getRenderer(void) const
+{
+	return (_renderer);
+}
+
 const std::shared_ptr<IResource>& ResourceManager::get(const std::string& name)
 {
 	auto res = _resources.find(name);

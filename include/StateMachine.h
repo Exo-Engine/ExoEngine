@@ -25,7 +25,7 @@
 #pragma once
 
 #include <initializer_list>
-#include <vector>
+#include <map>
 #include <atomic>
 #include <stack>
 
@@ -39,107 +39,133 @@ template	<typename ... Types>
 class	StateMachine
 {
 	public:
-		StateMachine(std::initializer_list<State<Types ...> *> states) : _states(states), _state(0), _asyncRequest(0), _reloadRequest(false)
+		StateMachine(std::initializer_list<State<Types ...> *> states) : _state(0), _asyncRequest(0), _reloadRequest(false)
 		{
-			_states[_state]->load(*this);
+			int	index = 0;
+
+			for
+				(State<Types ...>* state : states)
+			{
+				_states[index] = state;
+				index++;
+			}
+			try
+			{
+				_states.at(_state)->load();
+			}
+			catch (const std::exception&)
+			{
+			}
 		}
-		~StateMachine(void)
+		virtual ~StateMachine(void)
 		{
-			_states[_state]->unload(*this);
+			try
+			{
+				_states.at(_state)->unload();
+			}
+			catch (const std::exception&)
+			{
+			}
 		}
 
-		void	switchTo(size_t state)
+		void				switchTo(int state)
 		{
 			if (state == _state)
 				return ;
-			if (state >= _states.size())
-			{
-				_log.error << "cannot switch to state " << state << ", state machine have only " << _states.size() << std::endl;
-				return ;
-			}
-			_log.debug << "switching from state " << _states[_state]->name() << " to state " << _states[state]->name() << std::endl;
 			_asyncRequest = state;
-			_states[state]->load(*this);
-			_states[_state]->unload(*this);
+			_states.at(state)->load();
+			_states.at(_state)->unload();
 			_state = state;
-			_log.debug << "state switched" << std::endl;
 		}
-		void	switchTo(const std::string &state)
+		void				switchTo(const std::string &stateName)
 		{
-			for (size_t i = 0; i < _states.size(); i++)
-				if (_states[i]->name() == state)
-					return switchTo(i);
-			_log.error << "cannot switch to state " << state << ", unknown state" << std::endl;
+			for (std::pair<int, State<Types ...>*>& pair : _states)
+				if (pair.second->name() == stateName)
+					return switchTo(pair.first);
 		}
-		void	asyncSwitchTo(size_t state)
+		void				asyncSwitchTo(int state)
 		{
 			_asyncRequest = state;
 		}
-		void	asyncSwitchTo(const std::string &state)
+		void				asyncSwitchTo(const std::string &stateName)
 		{
-			for (size_t i = 0; i < _states.size(); i++)
-				if (_states[i]->name() == state)
-					return asyncSwitchTo(i);
-			_log.error << "cannot switch to state " << state << ", unknown state" << std::endl;
+			for (const std::pair<int, State<Types ...>*>& pair : _states)
+				if (pair.second->name() == stateName)
+					return asyncSwitchTo(pair.first);
 		}
 
-		void	reload(void)
+		void				reload(void)
 		{
-			_log.debug << "reloaded from state " << _states[_state]->name() << " to state " << _states[_state]->name() << std::endl;
-			_states[_state]->unload(*this);
-			_states[_state]->load(*this);
+			_states.at(_state)->unload();
+			_states.at(_state)->load();
 			_reloadRequest = false;
-			_log.debug << "state reloaded" << std::endl;
 		}
-		void	asyncReload(void)
+		void				asyncReload(void)
 		{
 			_reloadRequest = true;
 		}
 
-		void	run(Types ... args)
+		virtual void		run(Types ... args)
 		{
-			size_t	requested;
+			int	requested;
 
 			if ((requested = _asyncRequest) != _state)
 				switchTo(requested);
 			if (_reloadRequest)
 				reload();
-			_states[_state]->run(*this, args...);
+			_states.at(_state)->run(args...);
 		}
-		size_t				getStateIndex(void) const
+		int					getStateIndex(void) const
 		{
 			return (_state);
 		}
 		State<Types ...>	*getState(void) const
 		{
-			return (_states[_state]);
+			return (_states.at(_state));
 		}
 
-		void	push(void *ptr)
+		void				addState(int index, State<Types ...>* state)
 		{
-			_stack.push(ptr);
+			if (_states.find(index) == _states.end())
+			{
+				_states[index] = state;
+				_state = index;
+				state->load();
+			}
+			else
+			{
+				_states[index] = state;
+			}
 		}
 
-		void	*pop(void)
+		void				removeState(int index)
 		{
-			void	*tmp;
-
-			tmp = _stack.top();
-			_stack.pop();
-			return (tmp);
+			if (index == _state)
+			{
+				if (!_states.empty())
+				{
+					_state = _states.begin()->first;
+				}
+				else
+				{
+					_state = 0;
+				}
+			}
+			_states.erase(_states.find(index));
 		}
 
-		size_t	stackSize(void) const
+		void				removeState(State<Types ...>* state)
 		{
-			return (_stack.size());
+			for (const std::pair<int, State<Types ...>*>& pair : _states)
+				if (pair.second == state)
+					return removeState(pair.first);
 		}
 
 	private:
-		std::vector<State<Types ...> *> _states;
-		std::atomic<size_t>			 _state;
-		std::atomic<size_t>			 _asyncRequest;
-		std::atomic<bool>				_reloadRequest;
-		std::stack<void *>				_stack;
+		std::map<int, State<Types ...> *>	_states;
+		std::atomic<int>					_state;
+		std::atomic<int>					_asyncRequest;
+		std::atomic<bool>					_reloadRequest;
 };
 
 }

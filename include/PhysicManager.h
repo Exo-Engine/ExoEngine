@@ -26,13 +26,12 @@
 
 #include <btBulletDynamicsCommon.h>
 
-#include "Singleton.h"
 #include "Hitbox.h"
 
 namespace	ExoEngine
 {
 
-class	PhysicManager : public Singleton<PhysicManager>
+class	PhysicManager
 {
 	public:
 		PhysicManager(void);
