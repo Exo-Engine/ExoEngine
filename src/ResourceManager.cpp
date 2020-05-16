@@ -192,6 +192,19 @@ void	ResourceManager::loadHitboxes(const std::string &path, xmlNodePtr node)
 		add("hitboxes", std::shared_ptr<hitboxes>(new hitboxes(hitboxesVector)));
 }
 
+void	ResourceManager::loadModel(const std::string& relativePath, xmlNodePtr node)
+{
+	xmlChar *name = xmlGetProp(node, (const xmlChar *)"name");
+	xmlChar *path = xmlGetProp(node, (const xmlChar *)"path");
+
+	if (!name)
+		_log.warning << "model without name" << std::endl;
+	if (!path)
+		_log.warning << "model without path" << std::endl;
+	if (name && path)
+		add((char *)name, std::shared_ptr<Model>(_renderer->loadObj((relativePath + (char *)path).c_str())));
+}
+
 void	ResourceManager::loadProperties(xmlNodePtr node)
 {
 	xmlAttr *attribute;
@@ -239,6 +252,8 @@ void	ResourceManager::load(const std::string &file)
 					loadSubResource(path, currentNode);
 				else if (!xmlStrcmp(currentNode->name, (const xmlChar*)"hitboxes"))
 					loadHitboxes(path, currentNode);
+				else if (!xmlStrcmp(currentNode->name, (const xmlChar*)"model"))
+					loadModel(path, currentNode);
 				else
 					_log.warning << "unknown resource type '" << currentNode->name << "'" << std::endl;
 			}

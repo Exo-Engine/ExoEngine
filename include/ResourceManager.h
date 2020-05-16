@@ -34,6 +34,7 @@
 #include "IShader.h"
 #include "Font.h"
 #include "hitboxes.h"
+#include "Model.h"
 #include "IRenderer.h"
 #include "IAudio.h"
 #include "IResource.h"
@@ -75,7 +76,7 @@ class ResourceManager : public Singleton<ResourceManager>, public IResource
 		void	loadSound(const std::string &path, xmlNodePtr node);
 		void	loadSubResource(const std::string &path, xmlNodePtr node);
 		void	loadHitboxes(const std::string &path, xmlNodePtr node);
-		void	loadReference(const std::string &path, xmlNodePtr node);
+		void	loadModel(const std::string& path, xmlNodePtr node);
 
 		template	<typename T>
 		void	add(const std::string &name, const std::shared_ptr<T> &resource)

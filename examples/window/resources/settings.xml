@@ -8,8 +8,8 @@
  <fps>0</fps>
  <globalVolume>100</globalVolume>
  <language>fr</language>
- <libGraphic>../../lib-Exo-Renderer/SDLOpenGL/libExoRendererSDLOpenGL</libGraphic>
- <libAudio>../../lib-Exo-Audio/OpenAL/libExoAudioOpenAL</libAudio>
+ <libGraphic>../../../lib-Exo-Renderer/SDLOpenGL/libExoRendererSDLOpenGL</libGraphic>
+ <libAudio>../../../lib-Exo-Audio/OpenAL/libExoAudioOpenAL</libAudio>
  <servers>
   <server>
    <name>local</name>

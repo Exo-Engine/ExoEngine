@@ -23,20 +23,22 @@
  */
 
 #include "Engine.h"
+#include "Utils.h"
 
 using namespace	ExoEngine;
 using namespace	ExoRenderer;
 
-int		main(void)
+int		main(int argc, char **argv)
 {
-	Engine		engine("resources/settings.xml");
+	std::string	path = ExoEngine::getPath(std::string(argv[0]));
+	Engine		engine(path + "resources/settings.xml");
 	IRenderer*	renderer = engine.getRenderer();
 	IWindow*	window;
 	IKeyboard*	keyboard;
 	bool		run = true;
 
 	renderer->initialize("example window", 1280, 720, WINDOWED, false);
-	engine.getResourceManager()->load("resources/resources.xml");
+	engine.getResourceManager()->load(path + "resources/resources.xml");
 	window = renderer->getWindow();
 	keyboard = renderer->getKeyboard();
 	window->setVsync(true);
@@ -46,10 +48,15 @@ int		main(void)
 	cursor->setCursorTexture(cursorTexture);
 	renderer->setCursor(cursor);
 
-	IImage* image = renderer->createImage(cursorTexture);
-	image->setAnchor(AnchorPoint::CENTER);
-	image->setSize(100, 100);
-	renderer->add(image);
+	ICamera*	camera = renderer->createCamera();
+	camera->setPos(0, 0.5, 1);
+	camera->setDir(0, 0, -1);
+	camera->setUp(0, 1, 0);
+	renderer->setCurrentCamera(camera);
+
+	std::shared_ptr<Model> model = engine.getResourceManager()->get<Model>("model");
+	IModelInstance* instance = renderer->instanciate(model.get());
+	renderer->add(instance);
 
 	while (run)
 	{
