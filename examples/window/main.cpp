@@ -24,6 +24,9 @@
 
 #include "Engine.h"
 #include "Utils.h"
+#include "IModelInstance.h"
+
+#define PI	3.1415926535
 
 using namespace	ExoEngine;
 using namespace	ExoRenderer;
@@ -64,6 +67,7 @@ int		main(int argc, char **argv)
 			run = false;
 		if (window->getIsClosing())
 			run = false;
+		instance->rotate(PI / 300, glm::vec3(0, 1, 0));
 		cursor->update();
 		renderer->swap();
 	}
