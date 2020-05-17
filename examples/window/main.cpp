@@ -59,7 +59,10 @@ int		main(int argc, char **argv)
 
 	std::shared_ptr<Model> model = engine.getResourceManager()->get<Model>("model");
 	IModelInstance* instance = renderer->instanciate(model.get());
+	IModelInstance* instance2 = renderer->instanciate(model.get());
 	renderer->add(instance);
+	renderer->add(instance2);
+	instance2->translate(glm::vec3(-1, 0, -1));
 
 	while (run)
 	{
@@ -68,6 +71,7 @@ int		main(int argc, char **argv)
 		if (window->getIsClosing())
 			run = false;
 		instance->rotate(PI / 300, glm::vec3(0, 1, 0));
+		instance2->rotate(-PI / 30, glm::vec3(0, 1, 0));
 		cursor->update();
 		renderer->swap();
 	}
