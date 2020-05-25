@@ -28,6 +28,9 @@
 
 #define PI	3.1415926535
 
+#define STEP	0.1
+#define ANGLE	0.1
+
 using namespace	ExoEngine;
 using namespace	ExoRenderer;
 
@@ -40,7 +43,7 @@ int		main(int argc, char **argv)
 	IKeyboard*	keyboard;
 	bool		run = true;
 
-	renderer->initialize("example window", 1280, 720, WINDOWED, false);
+	renderer->initialize("example window", 1920, 1080, WINDOWED, false);
 	engine.getResourceManager()->load(path + "resources/resources.xml");
 	window = renderer->getWindow();
 	keyboard = renderer->getKeyboard();
@@ -52,17 +55,32 @@ int		main(int argc, char **argv)
 	renderer->setCursor(cursor);
 
 	ICamera*	camera = renderer->createCamera();
-	camera->setPos(0, 0.5, 1);
+	camera->setPos(0, 1, 3);
 	camera->setDir(0, 0, -1);
 	camera->setUp(0, 1, 0);
 	renderer->setCurrentCamera(camera);
 
+	// std::shared_ptr<Model> model = engine.getResourceManager()->get<Model>("model");
 	std::shared_ptr<Model> model = engine.getResourceManager()->get<Model>("model");
-	IModelInstance* instance = renderer->instanciate(model.get());
-	IModelInstance* instance2 = renderer->instanciate(model.get());
-	renderer->add(instance);
-	renderer->add(instance2);
-	instance2->translate(glm::vec3(-1, 0, -1));
+	std::shared_ptr<Model> charizard = engine.getResourceManager()->get<Model>("charizard");
+	std::shared_ptr<Model> skybox = engine.getResourceManager()->get<Model>("skybox");
+	renderer->instanciate(skybox.get());
+	// IModelInstance* instance = renderer->instanciate(model.get());
+	// IModelInstance* instance2 = renderer->instanciate(model.get());
+	// renderer->add(instance);
+	// renderer->add(instance2);
+	// instance2->translate(glm::vec3(-1, 0, -1));
+
+	std::vector<IModelInstance*>	instances;
+	for (double x = 0; x <= 3; x++)
+		for (double y = 0; y <= 3; y++)
+		{
+			IModelInstance* instance = renderer->instanciate(charizard.get());
+			instance->translate(glm::vec3(x * 3, 0, y * 3));
+			// instance->rotate((PI * x * y) / 30, glm::vec3(0, 1, 0));
+			renderer->add(instance);
+			instances.push_back(instance);
+		}
 
 	while (run)
 	{
@@ -70,8 +88,39 @@ int		main(int argc, char **argv)
 			run = false;
 		if (window->getIsClosing())
 			run = false;
-		instance->rotate(PI / 300, glm::vec3(0, 1, 0));
-		instance2->rotate(-PI / 30, glm::vec3(0, 1, 0));
+
+		//	movement
+		if (keyboard->isKeyDown(KEY_W))
+			camera->moveForward(STEP);
+		if (keyboard->isKeyDown(KEY_S))
+			camera->moveBackward(STEP);
+		if (keyboard->isKeyDown(KEY_A))
+			camera->moveLeft(STEP);
+		if (keyboard->isKeyDown(KEY_D))
+			camera->moveRight(STEP);
+		if (keyboard->isKeyDown(KEY_SPACE))
+			camera->moveUp(STEP);
+		if (keyboard->isKeyDown(KEY_LSHIFT))
+			camera->moveDown(STEP);
+
+		//	camera rotation
+		if (keyboard->isKeyDown(KEY_LEFT))
+			camera->turnLeft(ANGLE);
+		if (keyboard->isKeyDown(KEY_RIGHT))
+			camera->turnRight(ANGLE);
+		if (keyboard->isKeyDown(KEY_UP))
+			camera->turnUp(ANGLE);
+		if (keyboard->isKeyDown(KEY_DOWN))
+			camera->turnDown(ANGLE);
+
+		//	objects modifications
+		// instance->rotate(PI / 300, glm::vec3(0, 1, 0));
+		// instance2->rotate(-PI / 30, glm::vec3(0, 1, 0));
+
+		for (IModelInstance* instance : instances)
+			instance->rotate((PI * (instance->getBody()->getMatrix()[3][0] + 1) * (instance->getBody()->getMatrix()[3][2] + 1)) / 300, glm::vec3(0, 1, 0));
+
+		//	window update / swap
 		cursor->update();
 		renderer->swap();
 	}

@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
 	<texture name="cursor" path="cursor.png" />
-	<model name="model" path="models/charizard/Charizard.obj" />
+	<model name="model" path="models/model/orig.objm" />
+	<model name="charizard" path="models/charizard/Charizard.obj" />
+	<model name="skybox" path="models/skybox/skybox.obj" />
 </resources>
