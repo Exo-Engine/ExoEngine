@@ -26,6 +26,7 @@
 
 #include <map>
 #include <string>
+#include <typeinfo>
 
 namespace	ExoEngine
 {

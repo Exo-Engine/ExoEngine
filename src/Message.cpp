@@ -23,6 +23,7 @@
  */
 
 #include "Message.h"
+#include <sstream>
 
 using namespace	ExoEngine;
 

@@ -25,6 +25,7 @@
 #pragma once
 
 #include <libxml/parser.h>
+#include <string>
 #include <vector>
 #include <map>
 

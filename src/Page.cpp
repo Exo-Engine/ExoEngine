@@ -361,18 +361,22 @@ IWidget*	Page::loadInput(const std::map<std::string, std::string>& properties)
 
 IWidget*	Page::loadSelect(const std::map<std::string, std::string>& properties)
 {
+	return nullptr;
 }
 
 IWidget*	Page::loadSlider(const std::map<std::string, std::string>& properties)
 {
+	return nullptr;
 }
 
 IWidget*	Page::loadSpinner(const std::map<std::string, std::string>& properties)
 {
+	return nullptr;
 }
 
 IWidget*	Page::loadView(const std::map<std::string, std::string>& properties)
 {
+	return nullptr;
 }
 
 void	Page::load(xmlNodePtr node, IWidget* parentWidget)

@@ -17,6 +17,8 @@
 
 #include <libxml/parser.h>
 
+#define __PRETTY_FUNCTION__ __FUNCSIG__
+
 namespace	ExoEngine
 {
 	class	ResourceManager;

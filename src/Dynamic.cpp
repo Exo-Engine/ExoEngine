@@ -23,6 +23,7 @@
  */
 
 #include "Dynamic.h"
+#include <stdexcept>
 
 using namespace	ExoEngine;
 
